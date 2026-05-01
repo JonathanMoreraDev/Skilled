@@ -1,11 +1,55 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Terminal } from "lucide-react";
+import SkillCard from "#/components/SkillCard";
+import { skills } from "#/lib/mock-skills";
 
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
 	return (
-		<main>
-			<h1>Hello from Tanstack</h1>
-		</main>
+		<div id="home">
+			<section className="hero">
+				<div className="copy">
+					<h1>
+						The Registry for <br />
+						<span className="text-gradient"> Agentic Intelligence</span>
+					</h1>
+					<p>A high performance registry for procedural agent skills.</p>
+				</div>
+
+				<div className="actions">
+					<Link to="/skills" className="btn-primary">
+						<Terminal size={18} />
+						<span>Browse Registry</span>
+					</Link>
+					<Link to="/skills/new" className="btn-secondary">
+						Publish Skill
+					</Link>
+				</div>
+			</section>
+
+			<section className="latest">
+				<div className="space-y-2">
+					<h2>
+						Recently Created <span className="text-gradient">Skills</span>
+					</h2>
+					<p>
+						{" "}
+						Latest skills loaded from Firestore in descending creation order
+					</p>
+					<div>
+						{skills.length > 0 ? (
+							<div className="skills-grid">
+								{skills.map((skill) => (
+									<SkillCard key={skill.id} {...skill} />
+								))}
+							</div>
+						) : (
+							<p>No skills have been created yet</p>
+						)}
+					</div>
+				</div>
+			</section>
+		</div>
 	);
 }
