@@ -1,3 +1,4 @@
+import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 import {
 	ArrowBigUp,
@@ -11,15 +12,30 @@ import { useState } from "react";
 
 const SkillCard = (skillCard: SkillRecord) => {
 	const [copied, setCopied] = useState(false);
+	const posthog = usePostHog();
 
 	const handleCopy = async () => {
 		try {
 			await navigator.clipboard.writeText(skillCard.installCommand);
 			setCopied(true);
 			window.setTimeout(() => setCopied(false), 2000);
+			posthog.capture("skill_install_command_copied", {
+				skill_id: skillCard.id,
+				skill_title: skillCard.title,
+				skill_category: skillCard.category,
+				install_command: skillCard.installCommand,
+			});
 		} catch {
 			setCopied(false);
 		}
+	};
+
+	const handleOpen = () => {
+		posthog.capture("skill_opened", {
+			skill_id: skillCard.id,
+			skill_title: skillCard.title,
+			skill_category: skillCard.category,
+		});
 	};
 
 	return (
@@ -90,6 +106,7 @@ const SkillCard = (skillCard: SkillRecord) => {
 								to="/skills"
 								className="open"
 								title={`Open ${skillCard.title}`}
+								onClick={handleOpen}
 							>
 								<span>Open</span>
 								<ArrowUpRight size={14} />
