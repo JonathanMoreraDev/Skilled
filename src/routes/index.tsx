@@ -5,7 +5,7 @@ export const Route = createFileRoute("/")({ component: Home });
 function Home() {
 	return (
 		<main>
-			<h1>Hello from Tanstack Start</h1>
+			<h1>Hello from Tanstack</h1>
 		</main>
 	);
 }
