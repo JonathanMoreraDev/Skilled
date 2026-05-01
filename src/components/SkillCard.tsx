@@ -12,10 +12,14 @@ import { useState } from "react";
 const SkillCard = (skillCard: SkillRecord) => {
 	const [copied, setCopied] = useState(false);
 
-	const handleCopy = () => {
-		navigator.clipboard.writeText(skillCard.installCommand);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 2000);
+	const handleCopy = async () => {
+		try {
+			await navigator.clipboard.writeText(skillCard.installCommand);
+			setCopied(true);
+			window.setTimeout(() => setCopied(false), 2000);
+		} catch {
+			setCopied(false);
+		}
 	};
 
 	return (
@@ -44,7 +48,9 @@ const SkillCard = (skillCard: SkillRecord) => {
 						<div className="author-copy">
 							<p>Adrian</p>
 							<p>
-								{new Date(skillCard.createdAt as string).toLocaleDateString()}
+								{skillCard.createdAt
+									? new Date(skillCard.createdAt).toLocaleDateString()
+									: "Unknown date"}
 							</p>
 						</div>
 					</div>
