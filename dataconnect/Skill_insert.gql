@@ -1,0 +1,17 @@
+# This is a file for you to write an un-named mutation.
+# Only one un-named mutation is allowed per file.
+mutation {
+  skill_insert(
+    data: {
+      id: "11111111222233334444555555555555"
+      authorClerkId: "user_3D8JSOjW3VISM9fOcHUXyKaGO4c"
+      createdAt: "2026-05-02T17:26:25.949Z"
+      description: "Creates a route structure, layouts and navigation patterns for a TanStack Router app."
+      installCommand: "pnpm add @tanstack/react-router"
+      promptConfig: "You are a professional performance optimization engineer"
+      tags: ["ai-agent", "engineering"]
+      title: "TanStack Router Quickstart"
+      usageExample: "Review the code and optimize it"
+    }
+  )
+}

@@ -1,3 +1,4 @@
+import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 import {
 	ArrowBigUp,
@@ -8,18 +9,43 @@ import {
 	MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
+import type { GetSkillsData } from "#/dataconnect-generated";
 
-const SkillCard = (skillCard: SkillRecord) => {
+type SkillCardProps = GetSkillsData["skills"][number];
+
+const SkillCard = ({
+	createdAt,
+	description,
+	installCommand,
+	tags,
+	title,
+	author,
+}: SkillCardProps) => {
 	const [copied, setCopied] = useState(false);
+	const posthog = usePostHog();
+
+	const category = tags[0] ?? "General";
 
 	const handleCopy = async () => {
 		try {
-			await navigator.clipboard.writeText(skillCard.installCommand);
+			await navigator.clipboard.writeText(installCommand);
 			setCopied(true);
 			window.setTimeout(() => setCopied(false), 2000);
+			posthog.capture("skill_install_command_copied", {
+				skill_title: title,
+				skill_category: category,
+				install_command: installCommand,
+			});
 		} catch {
 			setCopied(false);
 		}
+	};
+
+	const handleOpen = () => {
+		posthog.capture("skill_opened", {
+			skill_title: title,
+			skill_category: category,
+		});
 	};
 
 	return (
@@ -27,7 +53,7 @@ const SkillCard = (skillCard: SkillRecord) => {
 			<Link
 				to="/"
 				tabIndex={-1}
-				aria-label={`Open ${skillCard.title}`}
+				aria-label={`Open ${title}`}
 				className="overlay"
 			/>
 
@@ -44,28 +70,32 @@ const SkillCard = (skillCard: SkillRecord) => {
 			<div className="body">
 				<div className="meta">
 					<div className="author">
-						<img src="/logo512.png" alt="author avatar" className="avatar" />
+						<img
+							src={author.imageUrl || "/logo512.png"}
+							alt={`${author.username} avatar`}
+							className="avatar"
+						/>
 						<div className="author-copy">
-							<p>Adrian</p>
+							<p>{author.username}</p>
 							<p>
-								{skillCard.createdAt
-									? new Date(skillCard.createdAt).toLocaleDateString()
+								{createdAt
+									? new Date(createdAt).toLocaleDateString()
 									: "Unknown date"}
 							</p>
 						</div>
 					</div>
-					<p className="category">{skillCard.category}</p>
+					<p className="category">{category}</p>
 				</div>
 				<div className="summary">
 					<Link to="/" className="title-link">
-						<h3>{skillCard.title}</h3>
+						<h3>{title}</h3>
 					</Link>
-					<p>{skillCard.description}</p>
+					<p>{description}</p>
 				</div>
 				<div className="command">
 					<div className="command-copy">
 						<span>{">_"}</span>
-						<p>{skillCard.installCommand}</p>
+						<p>{installCommand}</p>
 					</div>
 					<button
 						type="button"
@@ -79,17 +109,18 @@ const SkillCard = (skillCard: SkillRecord) => {
 					<div className="stats">
 						<button type="button" className="upvote" disabled>
 							<ArrowBigUp size={16} fill="currentColor" />
-							<span>{skillCard.tags.length}</span>
+							<span>{category.length}</span>
 						</button>
 						<div className="comments">
 							<MessageSquare size={14} />
-							<span>{skillCard.authorEmail ? 1 : 0}</span>
+							<span>{author.email ? 1 : 0}</span>
 						</div>
 						<div className="actions">
 							<Link
 								to="/skills"
 								className="open"
-								title={`Open ${skillCard.title}`}
+								title={`Open ${title}`}
+								onClick={handleOpen}
 							>
 								<span>Open</span>
 								<ArrowUpRight size={14} />
