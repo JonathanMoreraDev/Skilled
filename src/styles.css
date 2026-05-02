@@ -405,6 +405,10 @@
     }
   }
 
+  .theme-toggle {
+    @apply flex items-center gap-2 rounded-sm border border-border-subtle bg-surface px-3 py-2 text-sm font-semibold text-foreground transition-all hover:border-muted-foreground hover:bg-elevated cursor-pointer;
+  }
+
   .search-bar {
     @apply flex flex-col gap-3;
 
